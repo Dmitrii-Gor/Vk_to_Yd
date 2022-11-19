@@ -7,17 +7,17 @@ import time
 
 class VK:
 
-   def __init__(self, access_token, user_id, version='5.131'):
-       self.token = access_token
-       self.id = user_id
-       self.version = version
-       self.params = {'access_token': self.token, 'v': self.version}
+    def __init__(self, access_token, id_of_user, version='5.131'):
+        self.token = access_token
+        self.id = id_of_user
+        self.version = version
+        self.params = {'access_token': self.token, 'v': self.version}
 
-   def users_photo(self):
-       url = 'https://api.vk.com/method/photos.get'
-       params = {'owner_id': self.id, 'album_id': 'wall', 'photo_sizes': 0, 'extended': 1, 'rev': 1}
-       response = requests.get(url, params={**self.params, **params})
-       return response.json()
+    def users_photo(self):
+        url = 'https://api.vk.com/method/photos.get'
+        params = {'owner_id': self.id, 'album_id': 'wall', 'photo_sizes': 0, 'extended': 1, 'rev': 1}
+        response = requests.get(url, params={**self.params, **params})
+        return response.json()
 
 
 class YandexDisk:
@@ -44,14 +44,16 @@ class YandexDisk:
         params = {'path': file_path}
         responce = requests.put(upload_url, headers=headers, params=params)
         for i in tqdm(photos_json, desc="Загрузка фотографий на диск: "):
-            time.sleep(0.5)
+            time.sleep(1)
         return responce
 
 
+likes = 0
+date = 0
 photo_info = {}
 photos_json = []
 user_id = input('Введите айди страницы вконтакте - ')
-token = input('Введите токен своего яндекс диска - ')
+token_of_yd = input('Введите токен своего яндекс диска - ')
 folder_yd = input('Введите название папки в которую будут сохранены ваши фотографии - ')
 vk = VK(tok, user_id)
 photos_info = vk.users_photo()
@@ -73,7 +75,7 @@ for items in photos_info.values():
                 photos_json.append(photo_info)
                 photo_info = {}
 
-uploader = YandexDisk(token)
+uploader = YandexDisk(token_of_yd)
 uploader.create_folder(folder_yd)
 
 for link in photos_json:
